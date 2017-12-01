@@ -1,0 +1,27 @@
+net_openvpn_user: "openvpn"
+net_openvpn_group: "openvpn"
+net_openvpn_package_files:
+  - lzo2
+  - lz4
+  - openvpn
+net_openvpn_tun_device: "tun0"
+net_openvpn_port: "1194"
+net_openvpn_proto: "udp"
+net_openvpn_base_directory: "/etc/openvpn"
+net_openvpn_required_directories:
+  - "{{ net_openvpn_base_directory}}"
+  - "{{ net_openvpn_base_directory}}/certs"
+  - "{{ net_openvpn_base_directory}}/certs/private"
+  - "{{ net_openvpn_base_directory}}/certs/public"
+  - "{{ net_openvpn_base_directory}}/ccd"
+
+net_openvpn_config_file_src: "config.ovpn.j2"
+net_openvpn_config_file_dest: "{{ net_openvpn_base_directory }}/config.ovpn"
+net_openvpn_private_key_file_src: "openvpn.key"
+net_openvpn_private_key_file_dest: "{{ net_openvpn_base_directory }}/certs/private/{{ ansible_hostname }}.key"
+net_openvpn_dh_file_src: "dh.pem"
+net_openvpn_dh_file_dest: "{{ net_openvpn_base_directory }}/certs/dh.pem"
+net_openvpn_ca_file_src: "ca.crt"
+net_openvpn_ca_file_dest: "{{ net_openvpn_base_directory }}/certs/public/ca.crt"
+net_openvpn_public_cert_files_src: "certs/"
+net_openvpn_public_cert_files_dest: "{{ net_openvpn_base_directory}}/certs/public"

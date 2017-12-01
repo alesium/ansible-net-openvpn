@@ -1,0 +1,117 @@
+---
+  - name: Include OS-specific variables.
+    include_vars: "{{ item }}"
+    tags:
+      - net-openvpn
+    with_first_found:
+      - files:
+        - "{{ ansible_os_family }}.yml"
+      #- skip: true
+
+  - name: Install openvpn
+    package:
+      name: "{{ item }}"
+      state: "present"
+    with_items: "{{ net_openvpn_package_files }}"
+    tags:
+      - net-openvpn
+      - install
+
+  - name: Execute OS-specific post install tasks.
+    include_tasks: "{{ item }}"
+    tags:
+     - net-openvpn
+     - always
+    with_first_found:
+     - files:
+       - "{{ ansible_os_family }}.yml"
+     - path:
+       - "."
+     - skip: true
+
+  - name: execute pre openvpn configuration tasks
+    include_tasks: "{{ net_openvpn_pre_include }}"
+    when: net_openvpn_pre_include is defined
+    tags:
+      - net-openvpn
+      - always
+
+  - name: Ensure base directory is present and contains all the required direcotries
+    file:
+      path: "{{ item }}"
+      state: "directory"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+    with_items: "{{ net_openvpn_required_directories }}"
+    tags:
+      - net-openvpn
+      - install
+
+  - name: Copy config file
+    template:
+      src: "{{ net_openvpn_config_file_src }}"
+      dest: "{{ net_openvpn_config_file_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    tags:
+      - net-openvpn
+      - update
+
+  - name: Copy private key file
+    copy:
+      src: "{{ net_openvpn_private_key_file_src }}"
+      dest: "{{ net_openvpn_private_key_file_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    tags:
+      - net-openvpn
+      - update
+
+  - name: Copy dh file
+    copy:
+      src: "{{ net_openvpn_dh_file_src }}"
+      dest: "{{ net_openvpn_dh_file_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    tags:
+      - net-openvpn
+      - update
+
+  - name: Copy ca.crt file
+    copy:
+      src: "{{ net_openvpn_ca_file_src }}"
+      dest: "{{ net_openvpn_ca_file_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    tags:
+      - net-openvpn
+      - update
+
+  - name: Copy public cert files
+    copy:
+      src: "{{ item }}"
+      dest: "{{ net_openvpn_public_cert_files_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    with_fileglob:
+      - "{{ net_openvpn_public_cert_files_src }}/*.crt"
+    tags:
+      - net-openvpn
+      - update
+
+  - name: execute post openvpn configuration tasks
+    include_tasks: "{{ net_openvpn_post_include }}"
+    when: net_openvpn_post_include is defined
+    tags:
+      - net-openvpn
+      - always

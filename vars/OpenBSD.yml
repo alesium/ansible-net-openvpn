@@ -1,0 +1,2 @@
+net_openvpn_user: "_openvpn"
+net_openvpn_group: "_openvpn"
