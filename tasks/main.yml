@@ -21,7 +21,6 @@
     include_tasks: "{{ item }}"
     tags:
      - net-openvpn
-     - always
     with_first_found:
      - files:
        - "{{ ansible_os_family }}.yml"
@@ -34,7 +33,6 @@
     when: net_openvpn_pre_include is defined
     tags:
       - net-openvpn
-      - always
 
   - name: Ensure base directory is present and contains all the required direcotries
     file:
@@ -114,4 +112,3 @@
     when: net_openvpn_post_include is defined
     tags:
       - net-openvpn
-      - always
