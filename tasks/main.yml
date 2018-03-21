@@ -93,6 +93,19 @@
       - net-openvpn
       - update
 
+
+  - name: Copy ca.crt file
+    copy:
+      src: "{{ net_openvpn_crl_file_src }}"
+      dest: "{{ net_openvpn_crl_file_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    tags:
+      - net-openvpn
+      - update
+
   - name: Copy public cert files
     copy:
       src: "{{ item }}"
