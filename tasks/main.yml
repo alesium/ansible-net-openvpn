@@ -1,14 +1,14 @@
 ---
-	- name: Load platform specific variables
-  	include_vars: "{{ lookup('first_found', params) }}"
-  	vars:
-    	params:
-      	files:
-        	- '{{ansible_distribution}}.yml'
-        	- '{{ansible_os_family}}.yml'
-        	- 'main.yml'
-      	paths:
-					- 'vars'
+  - name: Load platform specific variables
+    include_vars: "{{ lookup('first_found', params) }}"
+    vars:
+      params:
+        files:
+          - '{{ansible_distribution}}.yml'
+          - '{{ansible_os_family}}.yml'
+          - 'main.yml'
+        paths:
+          - 'vars'
     tags:
       - net-openvpn
 
@@ -22,15 +22,15 @@
       - install
 
   - name: Execute OS-specific post install tasks.
-  	include_tasks: "{{ lookup('first_found', params) }}"
-  	vars:
-    	params:
-      	files:
-        	- 'post_install_{{ansible_distribution}}.yml'
-        	- 'post_install_{{ansible_os_family}}.yml'
-        	- 'post_install_main.yml'
-      	paths:
-					- '.'
+    include_tasks: "{{ lookup('first_found', params) }}"
+    vars:
+      params:
+        files:
+          - 'post_install_{{ansible_distribution}}.yml'
+          - 'post_install_{{ansible_os_family}}.yml'
+          - 'post_install_main.yml'
+        paths:
+          - '.'
     tags:
      - net-openvpn
 
@@ -99,15 +99,8 @@
       - net-openvpn
       - update
 
-
-  - name: Copy ca.crt file
-    copy:
-      src: "{{ net_openvpn_crl_file_src }}"
-      dest: "{{ net_openvpn_crl_file_dest }}"
-      mode: "0600"
-      owner: "{{ net_openvpn_user }}"
-      group: "{{ net_openvpn_group }}"
-      backup: "yes"
+  - name: Update crl
+    include_tasks: crl.yml
     tags:
       - net-openvpn
       - update

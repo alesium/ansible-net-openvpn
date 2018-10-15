@@ -1,0 +1,26 @@
+---
+  - name: Load platform specific variables
+    include_vars: "{{ lookup('first_found', params) }}"
+    vars:
+      params:
+        files:
+          - '{{ansible_distribution}}.yml'
+          - '{{ansible_os_family}}.yml'
+          - 'main.yml'
+        paths:
+          - 'vars'
+    tags:
+      - net-openvpn
+
+  - name: Copy crl file
+    copy:
+      src: "{{ net_openvpn_crl_file_src }}"
+      dest: "{{ net_openvpn_crl_file_dest }}"
+      mode: "0600"
+      owner: "{{ net_openvpn_user }}"
+      group: "{{ net_openvpn_group }}"
+      backup: "yes"
+    tags:
+      - net-openvpn
+      - update
+
