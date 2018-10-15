@@ -22,15 +22,17 @@
       - install
 
   - name: Execute OS-specific post install tasks.
-    include_tasks: "{{ item }}"
+  	include_tasks: "{{ lookup('first_found', params) }}"
+  	vars:
+    	params:
+      	files:
+        	- 'post_install_{{ansible_distribution}}.yml'
+        	- 'post_install_{{ansible_os_family}}.yml'
+        	- 'post_install_main.yml'
+      	paths:
+					- '.'
     tags:
      - net-openvpn
-    with_first_found:
-     - files:
-       - "{{ ansible_os_family }}.yml"
-     - path:
-       - "."
-     - skip: true
 
   - name: execute pre openvpn configuration tasks
     include_tasks: "{{ net_openvpn_pre_include }}"
